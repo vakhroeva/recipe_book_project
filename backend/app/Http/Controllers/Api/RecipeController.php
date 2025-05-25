@@ -8,11 +8,21 @@ use Illuminate\Http\Request;
 
 class RecipeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $query = Recipe::with('user', 'category', 'ingredients');
+
+        if ($request->has('category')) {
+            $query->whereHas('category', function ($q) use ($request) {
+                $q->where('name', $request->category);
+            });
+        }
+
+        $query = $query->get();
+
         return response()->json([
             'message' => 'Recipes were returned successfully',
-            'data' => Recipe::all(),
+            'data' => $query,
         ], 200);
     }
 
@@ -22,11 +32,18 @@ class RecipeController extends Controller
             'user_id' => 'required|exists:users,id',
             'title' => 'required|string|min:5|max:50',
             'description' => 'nullable|string',
-            'main_photo_url' => 'required|string',
+            'photo' => 'required|image|max:2048',
             'category_id' => 'required|exists:categories,id',
         ]);
 
-        $recipe = Recipe::create($validated);
+        $path = $request->file('photo')->store('recipes', 'public');
+        $recipe = Recipe::create([
+            'title' => $request->title,
+            'description' => $request->description,
+            'category_id' => $request->category_id,
+            'user_id' => $request->user_id,
+            'main_photo_url' => $path ? "/storage/$path" : null,
+        ]);
 
         return response()->json([
             'message' => 'Recipe created successfully',
@@ -37,6 +54,8 @@ class RecipeController extends Controller
     public function show(Recipe $recipe)
     {
         $recipe->load([
+            'user',
+            'category',
             'steps',
             'ingredients',
         ]);

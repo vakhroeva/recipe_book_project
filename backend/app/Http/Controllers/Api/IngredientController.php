@@ -11,16 +11,16 @@ class IngredientController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'recipe_id' => 'required|integer|exists:recipes,id',
-            'name' => 'required|string|max:100',
-            'amount' => 'required|string|max:50',
+            '*.recipe_id' => 'required|integer|exists:recipes,id',
+            '*.name' => 'required|string|max:100',
+            '*.amount' => 'required|string|max:50',
         ]);
 
-        $ingredient = Ingredient::create($validated);
+        $created = Ingredient::insert($validated);
 
         return response()->json([
-            'message' => 'Ingredient created successfully',
-            'data' => $ingredient,
+            'message' => 'Ингредиенты успешно добавлены',
+            'data' => $created,
         ], 201);
     }
 

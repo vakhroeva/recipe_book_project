@@ -9,6 +9,33 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
+    public function login(Request $request){
+        $users = User::where('login', $request->login)->get();
+
+        $authenticated = null;
+
+        foreach ($users as $user) {
+            if (Hash::check($request->password, $user->password)) {
+                $authenticated = $user;
+                break;
+            }
+        }
+
+        if (! $authenticated) {
+            return response()->json(['message' => 'Invalid credentials'], 401);
+        }
+
+        $token = $authenticated->createToken('api-token')->plainTextToken;
+
+        return response()->json(['token' => $token, 'user' => $authenticated]);
+    }
+
+    public function logout(Request $request){
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json(['message' => 'Logged out']);
+    }
+
     public function index()
     {
         return response()->json([
@@ -20,7 +47,7 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'username' => 'required|string|max:55',
+                'username' => 'required|string|max:55',
             'email' => 'required|unique:users|email',
             'login' => 'required|string|max:15',
             'password' => 'required|string|min:4|max:15',

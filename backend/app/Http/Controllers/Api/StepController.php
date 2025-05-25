@@ -11,16 +11,20 @@ class StepController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'recipe_id' => 'required|integer|exists:recipes,id',
-            'step_number' => 'required|integer',
-            'instruction' => 'required|string',
+            '*.recipe_id' => 'required|integer|exists:recipes,id',
+            '*.step_number' => 'required|integer',
+            '*.instruction' => 'required|string',
         ]);
 
-        $step = Step::create($validated);
+        $steps = [];
+
+        foreach ($validated as $stepData) {
+            $steps[] = Step::create($stepData);
+        }
 
         return response()->json([
-            'message' => 'Step created successfully',
-            'data' => $step,
+            'message' => 'Шаги добавлены',
+            'data' => $steps
         ], 201);
     }
 
