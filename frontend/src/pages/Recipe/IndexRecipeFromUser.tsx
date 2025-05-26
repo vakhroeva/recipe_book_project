@@ -17,7 +17,6 @@ const IndexRecipeFromUser: React.FC = () => {
         return response.json();
       })
       .then((data) => {
-        console.log(data.data);
         setRecipes(data.data || []);
         setLoading(false);
       })

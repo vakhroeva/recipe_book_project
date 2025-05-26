@@ -27,6 +27,6 @@ export type RecipeType = {
     main_photo_url: string;
     user: User;
     category: Category;
-    ingredient: Ingredient[];
-    step: Step[];
+    ingredients: Ingredient[];
+    steps: Step[];
 };

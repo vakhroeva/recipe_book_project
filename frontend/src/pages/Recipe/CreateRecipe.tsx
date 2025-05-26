@@ -318,7 +318,7 @@ import { useAuth } from 'AuthContext';
 
                 <input
                   type="text"
-                  placeholder="Ингредиент"
+                  placeholder="Описание действия"
                   value={step.instruction}
                   className="form-control w-50"
                   name={`step_${index}`}

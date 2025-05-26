@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom'
 import Recipe from 'components/Recipe';
-import {RecipeType} from '../../types/recipe';
+import {RecipeType, Ingredient} from '../../types/recipe';
 import { categoryColors } from 'constants/categoryColors';
+import IngredientLi from '../../components/IngredientLi';
+import StepLi from '../../components/StepLi';
     
 const ShowRecipe: React.FC = () => {
   const [recipe, setRecipe] = useState<RecipeType>();
@@ -35,7 +37,7 @@ const ShowRecipe: React.FC = () => {
   const backgroundTagColor = categoryColors[recipe.category.name] || '#ccc';
   
   return (
-    <div className="container d-flex flex-column text-center col-12 p-2">
+    <div className="container d-flex flex-column text-center col-12">
 
       <p className="my-3 mb-1">
         <span className='h2'>{recipe.title}</span>  
@@ -60,9 +62,23 @@ const ShowRecipe: React.FC = () => {
 
         <div className="col-12 col-md-6">
           <p className="text-start px-3 py-2">{recipe.description}</p>
+          <p className='h5'>Ингредиенты:</p>
+
+          <ul className="p-0 w-100 d-flex flex-column">
+            {recipe?.ingredients?.map((ing) => (
+              <IngredientLi key={ing.id} data={ing} />
+            ))} 
+          </ul>
         </div>
       </div>
       
+      <p className='h5 py-4'>Шаги:</p>
+      <div className='row justify-content-center'>
+        {recipe?.steps?.map((step) => (
+          <StepLi key={step.id} data={step} />
+        ))} 
+      </div>
+
     </div>
   );
 }
