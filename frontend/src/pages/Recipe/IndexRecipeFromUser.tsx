@@ -2,14 +2,23 @@ import React, { useEffect, useState } from 'react';
 import AddRecipeButton from "../../components/AddRecipeButton"
 import {RecipeType} from '../../types/recipe';
 import Recipe from 'components/Recipe';
+import { useAuth } from 'AuthContext';
 
 const IndexRecipeFromUser: React.FC = () => {
+  
+  const {userId, authToken} = useAuth();
   const [recipes, setRecipes] = useState<RecipeType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_URL}/api/recipes/`)
+    console.log(authToken);
+    fetch(`${process.env.REACT_APP_API_URL}/api/users/${Number(userId)}/recipes`, {
+      headers: {
+        'Authorization': `Bearer ${authToken}`,
+        'Accept': 'application/json'
+      },
+      })
       .then((response) => {
         if (!response.ok) {
           throw new Error('Ошибка при загрузке рецептов');

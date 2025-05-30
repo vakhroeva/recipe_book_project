@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Recipe;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class RecipeController extends Controller
@@ -23,6 +24,15 @@ class RecipeController extends Controller
         return response()->json([
             'message' => 'Recipes were returned successfully',
             'data' => $query,
+        ], 200);
+    }
+
+    public function userRecipes(User $user) {
+        $recipes = $user->recipes()->with(['user', 'category', 'ingredients'])->get();
+
+        return response()->json([
+            'message' => 'Recipes were returned successfully',
+            'data' => $recipes,
         ], 200);
     }
 
