@@ -31,13 +31,17 @@ const IndexRecipeWithCategory: React.FC = () => {
       if (loading) return <p>Загрузка...</p>;
       if (error) return <p>Ошибка: {error}</p>;
 
+      const handleRecipeDelete = (id: number) => {
+        setRecipes((prev) => prev.filter(recipe => recipe.id !== id));
+      };
+
     return(
         <div className="container d-flex flex-column">
           <h2 className="my-3">{categoryName}</h2>
           {recipes.length === 0 && <p>Рецептов пока нет</p>}
           <ul className="row d-flex flex-row">
             {recipes.map((recipe) => (
-              <Recipe key={recipe.id} data={recipe}/>
+              <Recipe key={recipe.id} data={recipe} onDelete={handleRecipeDelete}/>
             ))}
           </ul>
         </div>

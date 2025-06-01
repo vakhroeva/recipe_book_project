@@ -29,4 +29,5 @@ export type RecipeType = {
     category: Category;
     ingredients: Ingredient[];
     steps: Step[];
+    onDelete: (id: number) => void;
 };

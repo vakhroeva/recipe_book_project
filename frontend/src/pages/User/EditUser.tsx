@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
+
+import { useAuth } from 'context/AuthContext';
     
 const CreateUser: React.FC = () => {
-    const userId = localStorage.getItem('user_id');
+    const {userId, authToken} = useAuth();
 
     const [formData, setFormData] = useState({
         username: '',
@@ -27,7 +29,8 @@ const CreateUser: React.FC = () => {
                 const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/${Number(userId)}`, {
                     method: 'GET',
                     headers: {
-                    'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`,
+                        'Accept': 'application/json'
                     },
                 });
         

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import AddRecipeButton from "../../components/AddRecipeButton"
 import {RecipeType} from '../../types/recipe';
 import Recipe from 'components/Recipe';
-import { useAuth } from 'AuthContext';
+import { useAuth } from 'context/AuthContext';
 
 const IndexRecipeFromUser: React.FC = () => {
   
@@ -12,7 +12,6 @@ const IndexRecipeFromUser: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    console.log(authToken);
     fetch(`${process.env.REACT_APP_API_URL}/api/users/${Number(userId)}/recipes`, {
       headers: {
         'Authorization': `Bearer ${authToken}`,
@@ -38,6 +37,10 @@ const IndexRecipeFromUser: React.FC = () => {
   if (loading) return <p>Загрузка...</p>;
   if (error) return <p>Ошибка: {error}</p>;
 
+  const handleRecipeDelete = (id: number) => {
+    setRecipes((prev) => prev.filter(recipe => recipe.id !== id));
+  };
+
   return (
     <div className="container d-flex flex-column">
       <div className="d-flex flex-row justify-content-between my-3">
@@ -48,7 +51,7 @@ const IndexRecipeFromUser: React.FC = () => {
       {recipes.length === 0 && <p>Рецептов пока нет</p>}
       <div className="row d-flex flex-row">
         {recipes.map((recipe) => (
-          <Recipe key={recipe.id} data={recipe} />
+          <Recipe key={recipe.id} data={recipe} onDelete={handleRecipeDelete}/>
         ))}
         
       </div>

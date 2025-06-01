@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useAuth } from 'AuthContext';
+import { useAuth } from 'context/AuthContext';
     
   const CreateRecipe: React.FC = () => {
     const {userId, authToken} = useAuth();
@@ -39,6 +39,8 @@ import { useAuth } from 'AuthContext';
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
+              'Authorization': `Bearer ${authToken}`,
+              'Accept': 'application/json'
             },
           });
   
