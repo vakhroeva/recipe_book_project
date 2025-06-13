@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Recipe;
 use App\Models\Step;
 use Illuminate\Http\Request;
 
@@ -16,31 +17,21 @@ class StepController extends Controller
             '*.instruction' => 'required|string',
         ]);
 
-        $steps = [];
+        //$steps = [];
 
-        foreach ($validated as $stepData) {
-            $steps[] = Step::create($stepData);
-        }
+        $recipe = Recipe::findOrFail($validated[0]['recipe_id']);
+        $recipe->steps()->delete();
+
+        //foreach ($validated as $stepData) {
+        //    $steps[] = Step::create($stepData);
+        //}
+
+        $created = Step::insert($validated);
 
         return response()->json([
             'message' => 'Шаги добавлены',
-            'data' => $steps
+            'data' => $created
         ], 201);
-    }
-
-    public function update(Request $request, Step $step)
-    {
-        $validated = $request->validate([
-            'step_number' => 'sometimes|required|integer',
-            'instruction' => 'sometimes|required|string',
-        ]);
-
-        $step->update($validated);
-
-        return response()->json([
-            'message' => 'Step updated successfully',
-            'data' => $step,
-        ], 200);
     }
 
     public function destroy(Step $step)

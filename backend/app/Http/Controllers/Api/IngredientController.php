@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Ingredient;
+use App\Models\Recipe;
 use Illuminate\Http\Request;
 
 class IngredientController extends Controller
@@ -16,28 +17,21 @@ class IngredientController extends Controller
             '*.amount' => 'required|string|max:50',
         ]);
 
-        $created = Ingredient::insert($validated);
+        if (!isset($validated[0])) {
+            return response()->json(['error' => 'Нет ингредиентов в запросе'], 400);
+        }
+
+        $recipe = Recipe::findOrFail($validated[0]['recipe_id']);
+        $recipe->ingredients()->delete();
+
+        Ingredient::insert($validated);
 
         return response()->json([
             'message' => 'Ингредиенты успешно добавлены',
-            'data' => $created,
+            'data' => $validated,
         ], 201);
     }
 
-    public function update(Request $request, Ingredient $ingredient)
-    {
-        $validated = $request->validate([
-            'name' => 'sometimes|required|string|max:100',
-            'amount' => 'sometimes|required|string|max:50',
-        ]);
-
-        $ingredient->update($validated);
-
-        return response()->json([
-            'message' => 'Ingredient updated successfully',
-            'data' => $ingredient,
-        ], 200);
-    }
 
     public function destroy(Ingredient $ingredient)
     {

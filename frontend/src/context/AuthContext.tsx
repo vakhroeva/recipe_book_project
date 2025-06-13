@@ -12,6 +12,7 @@ export const AuthContext = createContext<AuthContextType | null>(null);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [authToken, setAuthToken] = useState<string | null>(null);
     const [userId, setUserId] = useState<number | null>(null);
+    const [isAuthReady, setIsAuthReady] = useState(false);
 
     useEffect(() => {
         const storedToken = localStorage.getItem('auth_token');
@@ -19,6 +20,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
         if (storedToken) setAuthToken(storedToken);
         if (storedUserId) setUserId(Number(storedUserId));
+
+        setIsAuthReady(true);
     }, []);
 
     const login = (token: string, userId: number) => {
@@ -34,6 +37,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         localStorage.removeItem('auth_token');
         localStorage.removeItem('user_id');
     };
+
+     if (!isAuthReady) return <p>Загрузка...</p>;
 
     return (
         <AuthContext.Provider value={{ authToken, userId, login, logout }}>

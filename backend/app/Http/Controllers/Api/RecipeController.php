@@ -6,9 +6,21 @@ use App\Http\Controllers\Controller;
 use App\Models\Recipe;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class RecipeController extends Controller
 {
+    public function deletePhoto(Recipe $recipe)
+    {
+        if ($recipe->main_photo_url) {
+            $path = str_replace('/storage/', '', $recipe->main_photo_url);
+            Storage::disk('public')->delete($path);
+
+            $recipe->main_photo_url = "deleted";
+            $recipe->save();
+        }
+    }
+
     public function index(Request $request)
     {
         $query = Recipe::with('user', 'category', 'ingredients');
@@ -79,14 +91,23 @@ class RecipeController extends Controller
     public function update(Request $request, Recipe $recipe)
     {
         $validated = $request->validate([
-            'user_id' => 'sometimes|required|exists:users,id',
-            'title' => 'sometimes|required|string|min:5|max:50',
+            'user_id' => 'sometimes|exists:users,id',
+            'title' => 'sometimes|string|min:5|max:50',
             'description' => 'nullable|string',
-            'main_photo_url' => 'sometimes|required|string',
-            'category_id' => 'sometimes|required|exists:categories,id',
+            'photo' => 'sometimes|image|max:2048',
+            'category_id' => 'sometimes|exists:categories,id',
         ]);
 
+        if ($request->hasFile('photo')) {
+            // удалить старое фото
+            $this->deletePhoto($recipe);
+
+            $stored = $request->file('photo')->store('recipes', 'public');
+            $validated['main_photo_url'] = "/storage/$stored";
+        }
+
         $recipe->update($validated);
+        $recipe->refresh();
 
         return response()->json([
             'message' => 'Recipe updated successfully',
@@ -96,6 +117,7 @@ class RecipeController extends Controller
 
     public function destroy(Recipe $recipe)
     {
+        $this->deletePhoto($recipe);
         $recipe->delete();
 
         return response()->json([

@@ -10,6 +10,7 @@ type RecipeProps = {
 };
 
 const truncate = (text: string, maxLength: number) => {
+    if (!text) return '';
     return text.length > maxLength
         ? text.slice(0, maxLength) + '...'
         : text;
@@ -47,7 +48,7 @@ const Recipe: React.FC<RecipeProps> = ({data, onDelete}) => {
 
   return (
     <div className="col-12 col-md-6 col-xl-4 text-center p-2">
-        <div className="border p-2 rounded">
+        <div className="border p-2 rounded" style={{minHeight: '470px'}}>
             
             <div className='d-flex justify-content-between'>
                 <p className="col-4 rounded fw-bold text-white" style={{ backgroundColor: backgroundTagColor }}><i className="fa fa-star me-1"></i>{data.category.name}</p>
@@ -71,7 +72,7 @@ const Recipe: React.FC<RecipeProps> = ({data, onDelete}) => {
                         objectFit: 'contain'
                     }}
                 />
-                <p className='h3 mb-0'>{data.title}</p>
+                <p className='h3 mb-0 text-truncate'>{data.title}</p>
                 <p>Author: {data.user.username}</p>
                 <p className="text-start px-2">{truncate(data.description, 200)}</p>
             </Link>

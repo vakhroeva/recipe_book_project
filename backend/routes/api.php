@@ -14,7 +14,7 @@ Route::prefix('recipes')->middleware('checkAuth')->name('recipes.')->group(funct
     Route::get('/', [RecipeController::class, 'index'])->name('index')->withoutMiddleware('checkAuth');
     Route::post('/', [RecipeController::class, 'store'])->name('store');
     Route::get('/{recipe}', [RecipeController::class, 'show'])->name('show')->withoutMiddleware('checkAuth');
-    Route::patch('/{recipe}', [RecipeController::class, 'update'])->name('update');
+    Route::post('/{recipe}', [RecipeController::class, 'update'])->name('update');
     Route::delete('/{recipe}', [RecipeController::class, 'destroy'])->name('destroy');
 });
 
@@ -37,13 +37,11 @@ Route::prefix('users')->middleware('checkAuth')->name('users.')->group(function 
 
 Route::prefix('steps')->middleware('checkAuth')->name('steps.')->group(function () {
     Route::post('/', [StepController::class, 'store'])->name('store');
-    Route::put('/{step}', [StepController::class, 'update'])->name('update');
     Route::delete('/{step}', [StepController::class, 'destroy'])->name('destroy');
 });
 
 Route::prefix('ingredients')->middleware('checkAuth')->name('ingredients.')->group(function () {
     Route::post('/', [IngredientController::class, 'store'])->name('store');
-    Route::put('/{ingredient}', [IngredientController::class, 'update'])->name('update');
     Route::delete('/{ingredient}', [IngredientController::class, 'destroy'])->name('destroy');
 });
 

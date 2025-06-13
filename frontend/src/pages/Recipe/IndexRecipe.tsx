@@ -36,7 +36,7 @@ const IndexRecipe: React.FC = () => {
     <div className="container d-flex flex-column">
       <h2 className="my-3">Все рецепты </h2>
       {recipes.length === 0 && <p>Рецептов пока нет</p>}
-      <ul className="row d-flex flex-row">
+      <ul className="row d-flex flex-row px-2">
         {recipes.map((recipe) => (
           <Recipe key={recipe.id} data={recipe} onDelete={handleRecipeDelete}/>
         ))}

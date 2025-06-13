@@ -12,6 +12,8 @@ const IndexRecipeFromUser: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!authToken || !userId) return;
+
     fetch(`${process.env.REACT_APP_API_URL}/api/users/${Number(userId)}/recipes`, {
       headers: {
         'Authorization': `Bearer ${authToken}`,
@@ -32,7 +34,7 @@ const IndexRecipeFromUser: React.FC = () => {
         setError(err.message);
         setLoading(false);
       });
-  }, []);
+  }, [authToken, userId]);
 
   if (loading) return <p>Загрузка...</p>;
   if (error) return <p>Ошибка: {error}</p>;
